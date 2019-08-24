@@ -9,8 +9,8 @@ const Url = require('../models/Url');
 // @route     POST /api/url/shorten
 // @desc      Create short URL
 router.post('/shorten', async (req, res) => {
-  const { longUrl } = req.body;
   const baseUrl = config.get('baseUrl');
+  const { longUrl, shortUrl } = req.body;
 
   // Check base url
   if (!validUrl.isUri(baseUrl)) {
@@ -18,7 +18,7 @@ router.post('/shorten', async (req, res) => {
   }
 
   // Create url code
-  const urlCode = shortid.generate();
+  let urlCode = shortUrl && !(await Url.findOne({ urlCode: shortUrl })) ? shortUrl : shortid.generate();
 
   // Check long url
   if (validUrl.isUri(longUrl)) {
